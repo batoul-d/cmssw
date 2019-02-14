@@ -40,7 +40,7 @@ kt4HiGenJets = cms.EDProducer("SubEventGenJetProducer",
                               AnomalousCellParameters,
                               jetAlgorithm = cms.string("Kt"),
                               rParam = cms.double(0.4)
-                              )
+)
 
 kt4HiGenJets.doAreaFastjet = cms.bool(True)
 kt4HiGenJets.doRhoFastjet  = cms.bool(False)

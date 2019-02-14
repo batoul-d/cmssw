@@ -6,6 +6,6 @@ pfCandComposites = cms.EDProducer('PFCandCompositeProducer',
                                   compositeTag = cms.InputTag('onia2MuMuPatGlbGlb'),
                                   jpsiTrigFilter = cms.string("hltL3fL1DoubleMuOpenL3FilteredPsi"),
                                   isHI = cms.bool(True),
-                                  removeJMM = cms.bool(True),
-                                  removeDKPi = cms.bool(False)
+                                  replaceJMM = cms.bool(True),
+                                  replaceDKPi = cms.bool(False)
                                   )

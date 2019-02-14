@@ -176,6 +176,46 @@ akCs4PFpatJetsWithBtagging = patJets.clone(
     # embedPFCandidates = True
     )
 
+
+
+akCs4PFpatJets = patJets.clone(
+    jetSource = cms.InputTag("akCs4PFJets"),
+    genJetMatch            = cms.InputTag("akCs4PFmatch"),
+    genPartonMatch         = cms.InputTag("akCs4PFparton"),
+    jetCorrFactorsSource   = cms.VInputTag(cms.InputTag("akCs4PFcorr")),
+    JetPartonMapSource     = cms.InputTag("akCs4PFPatJetFlavourAssociationLegacy"),
+    JetFlavourInfoSource   = cms.InputTag("akCs4PFPatJetFlavourAssociation"),
+    trackAssociationSource = cms.InputTag("akCs4PFJetTracksAssociatorAtVertex"),
+    useLegacyJetMCFlavour  = True,
+    discriminatorSources   = cms.VInputTag(
+        cms.InputTag("akCs4PFSimpleSecondaryVertexHighEffBJetTags"),
+        cms.InputTag("akCs4PFSimpleSecondaryVertexHighPurBJetTags"),
+        cms.InputTag("akCs4PFCombinedSecondaryVertexBJetTags"),
+        cms.InputTag("akCs4PFCombinedSecondaryVertexV2BJetTags"),
+        cms.InputTag("akCs4PFJetBProbabilityBJetTags"),
+        cms.InputTag("akCs4PFJetProbabilityBJetTags"),
+        # cms.InputTag("akCs4PFSoftPFMuonByPtBJetTags"),
+        # cms.InputTag("akCs4PFSoftPFMuonByIP3dBJetTags"),
+        cms.InputTag("akCs4PFTrackCountingHighEffBJetTags"),
+        cms.InputTag("akCs4PFTrackCountingHighPurBJetTags"),
+        ),
+    jetIDMap = cms.InputTag("akCs4PFJetID"),
+    addBTagInfo = False,
+    addTagInfos = False,
+    addDiscriminators = False,
+    addAssociatedTracks = False,
+    addJetCharge = False,
+    addJetID = False,
+    getJetMCFlavour = True,
+    addGenPartonMatch = True,
+    addGenJetMatch = True,
+    embedGenJetMatch = True,
+    embedGenPartonMatch = True,
+    # embedCaloTowers = False,
+    # embedPFCandidates = True
+    )
+
+
 akCs4PFNjettiness = Njettiness.clone(
     src = cms.InputTag("akCs4PFJets"),
     R0  = cms.double(0.4)
@@ -187,7 +227,7 @@ akCs4PFpatJetsWithBtagging.userData.userFloats.src += [
     'akCs4PFNjettiness:tau3']
 
 akCs4PFJetAnalyzer = inclusiveJetAnalyzer.clone(
-    jetTag = cms.InputTag("akCs4PFpatJetsWithBtagging"),
+    jetTag = cms.InputTag("akCs4PFpatJets"),
     genjetTag = 'ak4HiSignalGenJets',
     rParam = 0.4,
     matchJets = cms.untracked.bool(False),
@@ -200,7 +240,7 @@ akCs4PFJetAnalyzer = inclusiveJetAnalyzer.clone(
     useHepMC = cms.untracked.bool(False),
     genParticles = cms.untracked.InputTag("genParticles"),
     eventInfoTag = cms.InputTag("generator"),
-    doLifeTimeTagging = cms.untracked.bool(True),
+    doLifeTimeTagging = cms.untracked.bool(False),
     doLifeTimeTaggingExtras = cms.untracked.bool(False),
     bTagJetName = cms.untracked.string("akCs4PF"),
     jetName = cms.untracked.string("akCs4PF"),
@@ -238,13 +278,14 @@ akCs4PFJetSequence_mc = cms.Sequence(
     *
     akCs4PFJetTracksAssociatorAtVertex
     *
-    akCs4PFJetBtagging
-    *
+    #akCs4PFJetBtagging
+    #*
     # No constituents for calo jets in pp. Must be removed for pp calo jets but
     # I'm not sure how to do this transparently (Marta)
     akCs4PFNjettiness
     *
-    akCs4PFpatJetsWithBtagging
+    #akCs4PFpatJetsWithBtagging
+    akCs4PFpatJets
     *
     akCs4PFJetAnalyzer
     )
@@ -256,11 +297,12 @@ akCs4PFJetSequence_data = cms.Sequence(
     # *
     akCs4PFJetTracksAssociatorAtVertex
     *
-    akCs4PFJetBtagging
-    *
+    #akCs4PFJetBtagging
+    #*
     akCs4PFNjettiness
     *
-    akCs4PFpatJetsWithBtagging
+    #akCs4PFpatJetsWithBtagging
+    akCs4PFpatJets
     *
     akCs4PFJetAnalyzer
     )

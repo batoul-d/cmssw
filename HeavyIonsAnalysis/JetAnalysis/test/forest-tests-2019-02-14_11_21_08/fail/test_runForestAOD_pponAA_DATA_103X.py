@@ -25,14 +25,12 @@ process.HiForest.HiForestVersion = cms.string(version)
 
 process.source = cms.Source("PoolSource",
     duplicateCheckMode = cms.untracked.string("noDuplicateCheck"),
-    fileNames = cms.untracked.vstring(
-        "/store/hidata/HIRun2018A/HIDoubleMuon/AOD/PromptReco-v1/000/326/483/00000/901AFDEE-00C0-3242-A7DF-90885EC50A1E.root"
-        ),
+fileNames = cms.untracked.vstring('file:/afs/cern.ch/work/b/bdiab/public/jpsiJets2019/CMSSW_10_3_1/src/HeavyIonsAnalysis/JetAnalysis/test/forest-tests-2019-02-14_11_21_08/samples/step2_PbPb_1030_t0streamer_RECO.root'),
     )
 
 # Number of events we want to process, -1 = all events
 process.maxEvents = cms.untracked.PSet(
-    input = cms.untracked.int32(1000)
+    input = cms.untracked.int32(1)
     )
 
 ###############################################################################
@@ -71,18 +69,10 @@ process.centralityBin.centralityVariable = cms.string("HFtowers")
 ###############################################################################
 
 process.TFileService = cms.Service("TFileService",
-    fileName = cms.string("HiForestAOD.root"))
+    fileName = cms.string("runForestAOD_pponAA_DATA_103X.root"))
 
 ###############################################################################
 # Additional Reconstruction and Analysis: Main Body
-###############################################################################
-
-#############################
-# Onia
-#############################
-from HiAnalysis.HiOnia.oniaTreeAnalyzer_cff import oniaTreeAnalyzer
-oniaTreeAnalyzer(process, muonSelection="Glb", isMC=False, outputFileName="HiForestAOD.root")
-
 ###############################################################################
 
 #############################
@@ -90,8 +80,6 @@ oniaTreeAnalyzer(process, muonSelection="Glb", isMC=False, outputFileName="HiFor
 #############################
 # jet reco sequence
 process.load('HeavyIonsAnalysis.JetAnalysis.fullJetSequence_pponAA_data_cff')
-process.load('HeavyIonsAnalysis.JetAnalysis.jets.ak4PFJetSequence_pponPbPb_data_cff')
-
 # replace above with this one for JEC:
 # process.load('HeavyIonsAnalysis.JetAnalysis.fullJetSequence_JEC_cff')
 
@@ -101,106 +89,9 @@ process.akPu4PFcorr.payload = "AK4PF"
 process.akCs4PFcorr.payload = "AK4PF"
 process.akPu4PFJets.jetPtMin = 1
 
-from RecoJets.JetProducers.ak4PFJets_cfi import ak4PFJets
-process.ak4PFJets = ak4PFJets
-
 process.load('HeavyIonsAnalysis.JetAnalysis.hiFJRhoAnalyzer_cff')
 process.load("HeavyIonsAnalysis.JetAnalysis.pfcandAnalyzer_cfi")
 process.pfcandAnalyzer.doTrackMatching  = cms.bool(True)
-
-process.highPurityTracks = cms.EDFilter("TrackSelector",
-                                        src = cms.InputTag("generalTracks"),
-                                        cut = cms.string('quality("highPurity")')
-                                        )
-
-
-## This jet sequence has been horribly hacked for the onia-jet analysis
-
-
-process.particleFlowNoHF = cms.EDFilter("PdgIdPFCandidateSelector",
-                                          src = cms.InputTag("particleFlow"),
-                                          pdgId = cms.vint32(211,11,13,-11,-13,22,130)
-)
-
-
-process.load("RecoHI.HiJetAlgos.PFCandCompositeProducer_cfi")
-process.pfCandComposites.pfCandTag    = cms.InputTag('particleFlowNoHF')
-process.pfCandComposites.replaceJMM = True
-process.pfCandComposites.compositeTag = cms.InputTag("onia2MuMuPatGlbGlb")
-
-
-
-# cluster AK including J/psi, but with no UE subtraction
-process.ak4PFJetsWithJPsi = ak4PFJets.clone(
-    src = 'pfCandComposites',
-    jetCollInstanceName = cms.string('pfParticlesWithJPsi'),
-    writeJetsWithConst = cms.bool(True)
-)
-
-#filter out the jet containing the jpsi
-process.ak4PFXJetsWithJPsi = cms.EDFilter("PFJetXSelector",
-                            src = cms.InputTag("ak4PFJetsWithJPsi"),
-                            cut = cms.string("pt > 0.0 && abs(rapidity()) < 3.0")
-)
-
-# Now remove the J/Psi
-process.csCandsNoJPsi = cms.EDFilter("PFCandidateFwdPtrCollectionPdgIdFilter",
-                             src = cms.InputTag("ak4PFXJetsWithJPsi","constituents"),
-                             pdgId = cms.vint32(211,11,13,-11,-13,22,130)
-                         )
-
-# run the Cs subtraction on the J/Psi-jet, ignoring the Jpsi 
-process.akCs4PFJets.src = cms.InputTag("csCandsNoJPsi")
-process.akCs4PFJets.jetCollInstanceName = cms.string('pfParticlesCsNoJPsi')
-
-### put the J/Psi back with the candidates
-
-#here's the jpsi
-process.pfCandJPsi = cms.EDFilter("PdgIdPFCandidateSelector",
-                          src = cms.InputTag("pfCandComposites"),
-                          pdgId = cms.vint32(1)
-)
-
-
-
-process.pfCandsCsPlusJPsi = cms.EDProducer(
-    "PFCandidateListMerger",
-    src = cms.VInputTag(cms.InputTag("akCs4PFJets","pfParticlesCsNoJPsi"),
-                        cms.InputTag("pfCandJPsi"))    
-)
-
-
-
-process.akCs4PFJetsWithJPsi = ak4PFJets.clone(
-    src = cms.InputTag("pfCandsCsPlusJPsi"),
-    jetCollInstanceName = cms.string('pfParticlesCsWithJPsi'),
-    writeJetsWithConst = cms.bool(True)
-)
-
-process.akCs4PFcorr.src = "akCs4PFJetsWithJPsi"
-process.akCs4PFNjettiness.src = "akCs4PFJetsWithJPsi"
-
-process.akCs4PFpatJetsWithBtagging.jetSource = "akCs4PFJetsWithJPsi"
-
-process.akCs4PFJetAnalyzer.pfCandidateLabel = cms.untracked.InputTag('pfCandsCsPlusJPsi')
-
-
-process.pfcandAnalyzer.pfCandidateLabel = 'pfCandJPsi'
-
-
-
-process.jetSequence = cms.Sequence(
-    process.highPurityTracks +
-    process.ak4PFJetsWithJPsi +
-    process.ak4PFXJetsWithJPsi +
-    process.csCandsNoJPsi +
-    process.akCs4PFJets +
-    process.pfCandJPsi +
-    process.pfCandsCsPlusJPsi +
-    process.akCs4PFJetsWithJPsi +
-    process.akCs4PFJetSequence
-    )
-
 
 ###############################################################################
 
@@ -290,19 +181,16 @@ process.ana_step = cms.Path(
     #process.l1object +
     process.centralityBin +
     process.hiEvtAnalyzer +
-    process.oniaTreeAna +
-    process.particleFlowNoHF +
-    process.pfCandComposites +
     process.jetSequence +
-    #process.ggHiNtuplizer +
-    #process.ggHiNtuplizerGED +
-    #process.hiFJRhoAnalyzer +
+    process.ggHiNtuplizer +
+    process.ggHiNtuplizerGED +
+    process.hiFJRhoAnalyzer +
     process.pfcandAnalyzer +
-    process.pfcandAnalyzerCS 
-    #process.trackSequencesPP +
-    #process.zdcdigi +
-    #process.QWzdcreco +
-    #process.rechitanalyzerpp
+    process.pfcandAnalyzerCS +
+    process.trackSequencesPP +
+    process.zdcdigi +
+    process.QWzdcreco +
+    process.rechitanalyzerpp
     )
 
 # # edm output for debugging purposes
@@ -371,4 +259,3 @@ process.offlinePrimaryVerticesRecovery.oldVertexLabel = "offlinePrimaryVertices"
 ###############################################################################
 
 # Customization
-process.pfcandAnalyzer.pfCandidateLabel = 'pfCandJPsi'

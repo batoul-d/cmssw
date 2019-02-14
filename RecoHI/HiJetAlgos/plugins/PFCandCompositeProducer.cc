@@ -66,13 +66,13 @@ PFCandCompositeProducer::PFCandCompositeProducer(const edm::ParameterSet& iConfi
   //PI = TMath::Pi();
   jpsiTriggFilter_ = iConfig.getParameter<std::string>("jpsiTrigFilter");
   isHI_ = iConfig.getParameter<bool>("isHI");
-  removeJMM_ = iConfig.getParameter<bool>("removeJMM");
-  removeDKPi_ = iConfig.getParameter<bool>("removeDKPi");
+  replaceJMM_ = iConfig.getParameter<bool>("replaceJMM");
+  replaceDKPi_ = iConfig.getParameter<bool>("replaceDKPi");
   
   produces<reco::PFCandidateCollection>();
 
-  if(!removeJMM_ && !removeDKPi_) std::cout<<" PFCandCompositeProducer ain't doing jack "<<std::endl;
-  if(removeJMM_ && removeDKPi_) std::cout<<" removing multiple species not yet supported "<<std::endl;
+  if(!replaceJMM_ && !replaceDKPi_) std::cout<<" PFCandCompositeProducer ain't doing jack "<<std::endl;
+  if(replaceJMM_ && replaceDKPi_) std::cout<<" removing multiple species not yet supported "<<std::endl;
 
 }
 
@@ -94,14 +94,11 @@ PFCandCompositeProducer::~PFCandCompositeProducer()
 void
 PFCandCompositeProducer::produce(edm::Event& iEvent, const edm::EventSetup& iSetup)
 {
-  //std::cout << "at the beginning" << std::endl;
   using namespace edm;
   
   //std::auto_ptr<reco::PFCandidateCollection> prod(new reco::PFCandidateCollection());
   //std::unique_ptr<reco::PFCandidateCollection> prod(new reco::PFCandidateCollection());
   auto prod = std::make_unique<reco::PFCandidateCollection>();
-  
-  //std::cout << "prod initialized" << std::endl;
   
   edm::Handle<reco::PFCandidateCollection> pfCands;
   iEvent.getByToken(pfCandToken_, pfCands);
@@ -119,17 +116,13 @@ PFCandCompositeProducer::produce(edm::Event& iEvent, const edm::EventSetup& iSet
   std::vector<pat::CompositeCandidate> selComposites;
   
   
-  // first pass over composite candidates, apply selections and check for presence in PF candidates 
-  
-  //if(composites->size()>0)std::cout<<" # of composites "<<composites->size()<<std::endl;
-  
+  // first pass over composite candidates, apply selections and check for presence in PF candidates   
   for (std::vector<pat::CompositeCandidate>::const_iterator it=composites->begin();
        it!=composites->end(); ++it) {
-    //std::cout << "entering the CompositeCandidate loop" << std::endl;
     
     const pat::CompositeCandidate cand = *it;
     
-    if(removeDKPi_){  // only selection is pt > 3 GeV for now
+    if(replaceDKPi_){  // only selection is pt > 3 GeV for now
       
       if( seld0Cand(cand) ){	 
 	bool isDup = false;
@@ -149,18 +142,12 @@ PFCandCompositeProducer::produce(edm::Event& iEvent, const edm::EventSetup& iSet
 	prod->push_back(newPFCand);     
       }
     }
-    else if(removeJMM_){
-      //std::cout << "applying the selection" << std::endl;
+    else if(replaceJMM_){
       // apply some selections on the j/psi candidates here
-      //if (selJpsiCand(cand)) std::cout << "pass selJpsiCand" << std::endl;
-      //if (selMuonCand(cand,"muon1")) std::cout << "pass selMuonCand 1" << std::endl;
-      //if (selMuonCand(cand,"muon2")) std::cout << "pass selMuonCand 2" << std::endl;
       
       if( selJpsiCand(cand) && selMuonCand(cand,"muon1") && selMuonCand(cand,"muon2") ){
-	std::cout << "passing the selection" << std::endl;
 	bool isDup = false;
 	for(unsigned i=0;i<selComposites.size();i++){
-	  //std::cout << "selComposites loop" << std::endl;
 	  if(checkDupMuon(cand,selComposites[i])) {
 	    std::cout << "found duplicates" << std::endl;
 	    isDup = true;
@@ -169,20 +156,16 @@ PFCandCompositeProducer::produce(edm::Event& iEvent, const edm::EventSetup& iSet
 	}
 	//std::cout<<" isDup ? "<<isDup<<std::endl;
 	if(isDup) continue;
-	if (abs(cand.y())>2.5) {std::cout<<"jet |y| >2.5. I will skip the jet"<< std::endl; continue;}
+	//if (fabs(cand.y())>2.5) {std::cout<<"jet |y| >2.5. I will skip the jet"<< std::endl; continue;}
 	selComposites.push_back(cand);
 	
 	double candE = sqrt(cand.p()*cand.p() + 3.096916*3.096916);
 	reco::Particle::LorentzVector p4(cand.px(),cand.py(),cand.pz(),candE);
-	//std::cout << "made p4 TLorentzVector" << std::endl;
 	// charge, LorentzVector, type (reco::PFCandidate::ParticleType::X )
 	//reco::PFCandidate newPFCand(0,p4,reco::PFCandidate::ParticleType::h0);
 	reco::PFCandidate newPFCand(0,p4,reco::PFCandidate::ParticleType::h_HF);
-	//std::cout << "assign p4 to newPFCand" << std::endl;
 	prod->push_back(newPFCand);
-	std::cout << "push_back(newPFCand)" << std::endl;
       }
-      //else std::cout << "not passing the selection" << std::endl;
     }
     
   }
@@ -194,16 +177,13 @@ PFCandCompositeProducer::produce(edm::Event& iEvent, const edm::EventSetup& iSet
   
   int replacedCands = 0;
   
-  // now loop over PF candidates and remove ones that are part of composites
-  for(reco::PFCandidateCollection::const_iterator ci  = pfCands->begin(); ci!=pfCands->end(); ++ci)  {
-    
-    
-    const reco::PFCandidate& particle = *ci;
-    
-    //reco::PFCandidate pfOut = *particle.clone();
-    
+  // now loop over PF candidates and replace ones that are part of composites
+  for(reco::PFCandidateCollection::const_iterator ci  = pfCands->begin(); ci!=pfCands->end(); ++ci)  {        
+   
     bool writeCand = true;
     
+    const reco::PFCandidate& particle = *ci;
+
     if(particle.trackRef().isNonnull()){
       
       reco::TrackRef pfTrack = particle.trackRef();
@@ -221,7 +201,7 @@ PFCandCompositeProducer::produce(edm::Event& iEvent, const edm::EventSetup& iSet
 	
 	double eps = 0.0001;                                                                                                                                                   
 	
-	if(removeDKPi_){
+	if(replaceDKPi_){
 	  
 	  double dau1Pt = cand.daughter("track1")->pt();
 	  double dau1Eta = cand.daughter("track1")->eta();
@@ -237,7 +217,7 @@ PFCandCompositeProducer::produce(edm::Event& iEvent, const edm::EventSetup& iSet
 	    replacedCands++;                                                                                                                                                 
 	  }		
 	}
-	else if(removeJMM_){
+	else if(replaceJMM_){
 	  
 	  //cout << "Now checking candidate of type " << theJpsiCat << " with pt = " << cand.pt() << endl;
 	  
@@ -318,46 +298,37 @@ PFCandCompositeProducer::selJpsiCand(const pat::CompositeCandidate jpsiCand){
   
   if(muon1->charge() == muon2->charge()) return false;
 
-  //std::cout<<" selected Jpsi "<<std::endl;
-
   return true;
 }
 
 bool
 PFCandCompositeProducer::selMuonCand(const pat::CompositeCandidate jpsiCand, const char* muonName){
-  //std::cout<<" muonName "<<muonName<<std::endl;
   const pat::Muon* muon = dynamic_cast<const pat::Muon*>(jpsiCand.daughter(muonName));
 
   if(!muon::isGoodMuon(*muon, muon::TMOneStationTight)) return false;
-  //std::cout<<muonName<<" passing isGoodMuon "<<std::endl;
 
   if(!muon->isTrackerMuon()) return false;
-  //std::cout<<muonName<<" is passing isTrackerMuon"<<std::endl;
+
   math::XYZPoint RefVtx;
-  //if (isHI_) std::cout<<muonName<<" isHI_ "<<std::endl;
+
   if (isHI_) 
     RefVtx = (*jpsiCand.userData<reco::Vertex>("PVwithmuons")).position();
   else 
     RefVtx = (*jpsiCand.userData<reco::Vertex>("muonlessPV")).position();
-  //std::cout<<muonName<<" PVwithmuons or muonlessPV positions taken"<<std::endl;
 
   reco::TrackRef iTrack = muon->innerTrack();
   if(fabs(iTrack->dz(RefVtx)) > 20) return false;
   if(fabs(iTrack->dxy(RefVtx)) > 0.3) return false;
   if(iTrack->hitPattern().trackerLayersWithMeasurement() < 6) return false;
-  //std::cout<<muonName<<" passing trackerLayer > 6 "<<std::endl;
   if(iTrack->hitPattern().pixelLayersWithMeasurement() < 1) return false;
-  //std::cout<<muonName<<" passing pixelLayer > 1 "<<std::endl;
 
   const pat::TriggerObjectStandAloneCollection muHLTMatchesFilter = muon->triggerObjectMatchesByFilter(jpsiTriggFilter_);  
   bool isTriggerMatched = muHLTMatchesFilter.size() > 0;  
   if(!isTriggerMatched) return false;
-  //std::cout<<muonName<<" passing triggerMatching "<<std::endl;
 
   bool isGlobalMuon = muon->isGlobalMuon();
 
   if(!isGlobalMuon) return false;
-  //std::cout<<muonName<<" passing Global "<<std::endl;
   double eta = muon->eta();
   double pt = muon->pt();
   bool isMuonInAcc = (fabs(eta) < 2.4 && ((fabs(eta) < 1.2 && pt >= 3.5) ||
@@ -365,8 +336,7 @@ PFCandCompositeProducer::selMuonCand(const pat::CompositeCandidate jpsiCand, con
                      (2.1 <= fabs(eta) && pt >= 1.8)));
   
   if(!isMuonInAcc) return false;
-  //std::cout<<muonName<<" passing Acceptance "<<std::endl;
-  //std::cout<<" selected muon "<<std::endl;
+  std::cout<<" selected muon "<<std::endl;
   return true;
 }
 

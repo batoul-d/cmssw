@@ -45,8 +45,8 @@ class PFCandCompositeProducer : public edm::EDProducer {
   edm::EDGetTokenT<pat::CompositeCandidateCollection> compositeToken_;
   std::string jpsiTriggFilter_;
   bool isHI_;
-  bool removeJMM_;
-  bool removeDKPi_;
+  bool replaceJMM_;
+  bool replaceDKPi_;
  
   
 };

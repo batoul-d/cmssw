@@ -161,10 +161,10 @@ akCs4PFpatJetsWithBtagging = patJets.clone(
         cms.InputTag("akCs4PFTrackCountingHighPurBJetTags"),
         ),
     jetIDMap = cms.InputTag("akCs4PFJetID"),
-    addBTagInfo = True,
-    addTagInfos = True,
+    addBTagInfo = False,
+    addTagInfos = False,
     addDiscriminators = True,
-    addAssociatedTracks = True,
+    addAssociatedTracks = False,
     addJetCharge = False,
     addJetID = False,
     getJetMCFlavour = False,
@@ -200,7 +200,7 @@ akCs4PFJetAnalyzer = inclusiveJetAnalyzer.clone(
     useHepMC = cms.untracked.bool(False),
     genParticles = cms.untracked.InputTag("genParticles"),
     eventInfoTag = cms.InputTag("generator"),
-    doLifeTimeTagging = cms.untracked.bool(True),
+    doLifeTimeTagging = cms.untracked.bool(False),
     doLifeTimeTaggingExtras = cms.untracked.bool(False),
     bTagJetName = cms.untracked.string("akCs4PF"),
     jetName = cms.untracked.string("akCs4PF"),
@@ -236,10 +236,10 @@ akCs4PFJetSequence_mc = cms.Sequence(
     # *
     # akCs4PFPatJetFlavourId # Use legacy algo till PU implemented
     *
-    akCs4PFJetTracksAssociatorAtVertex
-    *
-    akCs4PFJetBtagging
-    *
+    #akCs4PFJetTracksAssociatorAtVertex
+    #*
+    #akCs4PFJetBtagging
+    #*
     # No constituents for calo jets in pp. Must be removed for pp calo jets but
     # I'm not sure how to do this transparently (Marta)
     akCs4PFNjettiness
@@ -256,8 +256,8 @@ akCs4PFJetSequence_data = cms.Sequence(
     # *
     akCs4PFJetTracksAssociatorAtVertex
     *
-    akCs4PFJetBtagging
-    *
+    #akCs4PFJetBtagging
+    #*
     akCs4PFNjettiness
     *
     akCs4PFpatJetsWithBtagging
