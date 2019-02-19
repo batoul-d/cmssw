@@ -26,13 +26,14 @@ process.HiForest.HiForestVersion = cms.string(version)
 process.source = cms.Source("PoolSource",
     duplicateCheckMode = cms.untracked.string("noDuplicateCheck"),
     fileNames = cms.untracked.vstring(
-        "/store/hidata/HIRun2018A/HIDoubleMuon/AOD/PromptReco-v1/000/326/483/00000/901AFDEE-00C0-3242-A7DF-90885EC50A1E.root"
+        #"/store/hidata/HIRun2018A/HIDoubleMuon/AOD/PromptReco-v1/000/326/483/00000/901AFDEE-00C0-3242-A7DF-90885EC50A1E.root"
+        '/store/hidata/HIRun2018A/HIDoubleMuon/AOD/PromptReco-v2/000/327/564/00000/FFCC5CAB-A106-C44E-B670-C5E1D15E9571.root'
         ),
     )
 
 # Number of events we want to process, -1 = all events
 process.maxEvents = cms.untracked.PSet(
-    input = cms.untracked.int32(1000)
+    input = cms.untracked.int32(-1)
     )
 
 ###############################################################################
@@ -82,6 +83,15 @@ process.TFileService = cms.Service("TFileService",
 #############################
 from HiAnalysis.HiOnia.oniaTreeAnalyzer_cff import oniaTreeAnalyzer
 oniaTreeAnalyzer(process, muonSelection="Glb", isMC=False, outputFileName="HiForestAOD.root")
+process.onia2MuMuPatGlbGlb.dimuonSelection = cms.string("pt > 6.5")
+process.hionia.SumETvariables   = cms.bool(False)
+
+#process.trigFilter=cms.OutputModule("PoolOutputModule",
+#                                    fileName = cms.untracked.string("HiForestAOD.root"),
+#                                    SelectEvents = cms.untracked.PSet(SelectEvents = cms.vstring('hltL3fL1DoubleMuOpenL3FilteredPsi')
+#                                                                      )
+#                                    )
+#process.onia2MuMuPatGlbGlb.dimuonSelection = cms.string("pt > 6")
 
 ###############################################################################
 
@@ -285,8 +295,8 @@ process.load("RecoVertex.PrimaryVertexProducer.OfflinePrimaryVerticesRecovery_cf
 process.ana_step = cms.Path(
     process.offlinePrimaryVerticesRecovery +
     process.HiForest +
-    process.hltanalysis +
-    process.hltobject +
+    #process.hltanalysis +
+    #process.hltobject +
     #process.l1object +
     process.centralityBin +
     process.hiEvtAnalyzer +
@@ -372,3 +382,14 @@ process.offlinePrimaryVerticesRecovery.oldVertexLabel = "offlinePrimaryVertices"
 
 # Customization
 process.pfcandAnalyzer.pfCandidateLabel = 'pfCandJPsi'
+
+##################################### trigger selection
+process.load("HLTrigger.HLTfilters.hltHighLevel_cfi")
+process.hltPFJet60 = process.hltHighLevel.clone()
+process.hltPFJet60.HLTPaths = ["HLT_HIL3DoubleMuOpen_JpsiPsi_v1"]
+process.superFilterSequence = cms.Sequence(process.hltPFJet60)
+process.superFilterPath = cms.Path(process.superFilterSequence)
+
+process.skimanalysis.superFilters = cms.vstring("superFilterPath")
+for path in process.paths:
+    getattr(process,path)._seq = process.superFilterSequence*getattr(process,path)._seq
