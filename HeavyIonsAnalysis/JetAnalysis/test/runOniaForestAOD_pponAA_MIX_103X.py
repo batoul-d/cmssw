@@ -199,7 +199,7 @@ process.pfCandComposites.compositeTag = cms.InputTag("onia2MuMuPatGlbGlb")
 from HiAnalysis.HiOnia.oniaTreeAnalyzer_cff import oniaTreeAnalyzer
 #oniaTreeAnalyzer(process, isPbPb=False, isMC=True, applyEventSel=False, muonSelection="Glb", outputFileName="HiForestAOD.root")
 #oniaTreeAnalyzer(process, muonTriggerList=[[],[],[],[]], HLTProName='HLT', muonSelection="Trk", useL1Stage2=True, isMC=True, pdgID=443, outputFileName="OniaTree.root", doTrimu=False)
-oniaTreeAnalyzer(process, muonSelection="Glb", isMC=False, outputFileName="HiForestAOD.root")
+oniaTreeAnalyzer(process, muonSelection="Glb", isMC=True, outputFileName="HiForestAOD.root")
 
 
 process.pfcandAnalyzer.pfCandidateLabel = 'pfCandJPsi'
@@ -224,9 +224,9 @@ process.ana_step = cms.Path(
     process.jetSequence +
 #    process.ggHiNtuplizer +
 #    process.ggHiNtuplizerGED +
-    process.hiFJRhoAnalyzer +
-    process.pfcandAnalyzer +
-    process.pfcandAnalyzerCS #+
+#    process.hiFJRhoAnalyzer +
+#    process.pfcandAnalyzer +
+#    process.pfcandAnalyzerCS #+
 #    process.trackSequencesPP +
 #    process.rechitanalyzerpp
     )

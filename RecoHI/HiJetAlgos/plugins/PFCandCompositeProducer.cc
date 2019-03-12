@@ -336,7 +336,6 @@ PFCandCompositeProducer::selMuonCand(const pat::CompositeCandidate jpsiCand, con
                      (2.1 <= fabs(eta) && pt >= 1.8)));
   
   if(!isMuonInAcc) return false;
-  std::cout<<" selected muon "<<std::endl;
   return true;
 }
 

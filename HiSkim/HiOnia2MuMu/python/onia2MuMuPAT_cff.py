@@ -5,7 +5,7 @@ from PhysicsTools.PatAlgos.tools.helpers import *
 def onia2MuMuPAT(process, GlobalTag, MC=False, HLT='HLT', Filter=True, useL1Stage2=False, doTrimuons=False):
     # Setup the process
     process.options = cms.untracked.PSet(
-        wantSummary = cms.untracked.bool(True),
+        wantSummary = cms.untracked.bool(False),
         # fileMode = cms.untracked.string('MERGE'),
     )
      
