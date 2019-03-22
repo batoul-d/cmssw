@@ -26,15 +26,7 @@ process.HiForest.HiForestVersion = cms.string(version)
 process.source = cms.Source("PoolSource",
     duplicateCheckMode = cms.untracked.string("noDuplicateCheck"),
     fileNames = cms.untracked.vstring(
-        "/store/user/bdiab/Jpsi_5p02TeV_Pythia8CUEP8M1_PU/Jpsi_5p02TeV_Pythia8CUEP8M1_PU_CMSSW_10_3_1_RECO/181214_095626/0000/step2_RAW2DIGI_L1Reco_RECO_1.root",
-        "/store/user/bdiab/Jpsi_5p02TeV_Pythia8CUEP8M1_PU/Jpsi_5p02TeV_Pythia8CUEP8M1_PU_CMSSW_10_3_1_RECO/181214_095626/0000/step2_RAW2DIGI_L1Reco_RECO_2.root",
-        "/store/user/bdiab/Jpsi_5p02TeV_Pythia8CUEP8M1_PU/Jpsi_5p02TeV_Pythia8CUEP8M1_PU_CMSSW_10_3_1_RECO/181214_095626/0000/step2_RAW2DIGI_L1Reco_RECO_3.root",
-        "/store/user/bdiab/Jpsi_5p02TeV_Pythia8CUEP8M1_PU/Jpsi_5p02TeV_Pythia8CUEP8M1_PU_CMSSW_10_3_1_RECO/181214_095626/0000/step2_RAW2DIGI_L1Reco_RECO_4.root",
-        "/store/user/bdiab/Jpsi_5p02TeV_Pythia8CUEP8M1_PU/Jpsi_5p02TeV_Pythia8CUEP8M1_PU_CMSSW_10_3_1_RECO/181214_095626/0000/step2_RAW2DIGI_L1Reco_RECO_5.root",
-        "/store/user/bdiab/Jpsi_5p02TeV_Pythia8CUEP8M1_PU/Jpsi_5p02TeV_Pythia8CUEP8M1_PU_CMSSW_10_3_1_RECO/181214_095626/0000/step2_RAW2DIGI_L1Reco_RECO_6.root",
-        "/store/user/bdiab/Jpsi_5p02TeV_Pythia8CUEP8M1_PU/Jpsi_5p02TeV_Pythia8CUEP8M1_PU_CMSSW_10_3_1_RECO/181214_095626/0000/step2_RAW2DIGI_L1Reco_RECO_7.root",
-        "/store/user/bdiab/Jpsi_5p02TeV_Pythia8CUEP8M1_PU/Jpsi_5p02TeV_Pythia8CUEP8M1_PU_CMSSW_10_3_1_RECO/181214_095626/0000/step2_RAW2DIGI_L1Reco_RECO_8.root",
-        "/store/user/bdiab/Jpsi_5p02TeV_Pythia8CUEP8M1_PU/Jpsi_5p02TeV_Pythia8CUEP8M1_PU_CMSSW_10_3_1_RECO/181214_095626/0000/step2_RAW2DIGI_L1Reco_RECO_9.root"
+        "/store/user/anstahll/Dilepton/MC/Embedded/JpsiMM_5p02TeV_TuneCP5_Embd_RECO_20190117/JpsiMM_5p02TeV_TuneCP5/JpsiMM_5p02TeV_TuneCP5_Embd_RECO_20190117/190118_020651/0001/JpsiMM_5p02TeV_TuneCP5_Embd_step2_1074.root",
         ),
     )
 
@@ -54,7 +46,8 @@ process.load('Configuration.StandardSequences.FrontierConditions_GlobalTag_cff')
 process.load('FWCore.MessageService.MessageLogger_cfi')
 
 from Configuration.AlCa.GlobalTag import GlobalTag
-process.GlobalTag = GlobalTag(process.GlobalTag, 'auto:phase1_2018_realistic_hi', '')
+#process.GlobalTag = GlobalTag(process.GlobalTag, 'auto:phase1_2018_realistic_hi', '')
+process.GlobalTag = GlobalTag(process.GlobalTag, '103X_upgrade2018_realistic_HI_v11', '') 
 process.HiForest.GlobalTagLabel = process.GlobalTag.globaltag
 
 print('\n\033[31m~*~ USING CENTRALITY TABLE FOR Hydjet Drum5Ev8 ~*~\033[0m\n')
@@ -185,7 +178,7 @@ process.load("RecoVertex.PrimaryVertexProducer.OfflinePrimaryVerticesRecovery_cf
 
 process.particleFlowNoHF = cms.EDFilter("PdgIdPFCandidateSelector",
                                         src = cms.InputTag("particleFlow"),
-                                        pdgId = cms.vint32(211,11,13,-11,-13,22,130)
+                                        pdgId = cms.vint32(211,-211,11,13,-11,-13,22,130)
                                     )
 
 process.load("RecoHI.HiJetAlgos.PFCandCompositeProducer_cfi")
@@ -221,7 +214,7 @@ process.ana_step = cms.Path(
     process.oniaTreeAna +
     process.particleFlowNoHF +
     process.pfCandComposites +
-    process.jetSequence +
+    process.jetSequence 
 #    process.ggHiNtuplizer +
 #    process.ggHiNtuplizerGED +
 #    process.hiFJRhoAnalyzer +

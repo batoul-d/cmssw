@@ -86,13 +86,6 @@ oniaTreeAnalyzer(process, muonSelection="Glb", isMC=False, outputFileName="HiFor
 process.onia2MuMuPatGlbGlb.dimuonSelection = cms.string("pt > 6.5")
 process.hionia.SumETvariables   = cms.bool(False)
 
-#process.trigFilter=cms.OutputModule("PoolOutputModule",
-#                                    fileName = cms.untracked.string("HiForestAOD.root"),
-#                                    SelectEvents = cms.untracked.PSet(SelectEvents = cms.vstring('hltL3fL1DoubleMuOpenL3FilteredPsi')
-#                                                                      )
-#                                    )
-#process.onia2MuMuPatGlbGlb.dimuonSelection = cms.string("pt > 6")
-
 ###############################################################################
 
 #############################
@@ -129,7 +122,7 @@ process.highPurityTracks = cms.EDFilter("TrackSelector",
 
 process.particleFlowNoHF = cms.EDFilter("PdgIdPFCandidateSelector",
                                           src = cms.InputTag("particleFlow"),
-                                          pdgId = cms.vint32(211,11,13,-11,-13,22,130)
+                                          pdgId = cms.vint32(211,-211,11,13,-11,-13,22,130)
 )
 
 
@@ -156,7 +149,7 @@ process.ak4PFXJetsWithJPsi = cms.EDFilter("PFJetXSelector",
 # Now remove the J/Psi
 process.csCandsNoJPsi = cms.EDFilter("PFCandidateFwdPtrCollectionPdgIdFilter",
                              src = cms.InputTag("ak4PFXJetsWithJPsi","constituents"),
-                             pdgId = cms.vint32(211,11,13,-11,-13,22,130)
+                             pdgId = cms.vint32(211,-211,11,13,-11,-13,22,130)
                          )
 
 # run the Cs subtraction on the J/Psi-jet, ignoring the Jpsi 

@@ -62,7 +62,7 @@ ak4PFXJetsWithJPsi = cms.EDFilter("PFJetXSelector",
 # Now remove the J/Psi
 csCandsNoJPsi = cms.EDFilter("PFCandidateFwdPtrCollectionPdgIdFilter",
                              src = cms.InputTag("ak4PFXJetsWithJPsi","constituents"),
-                             pdgId = cms.vint32(211,11,13,-11,-13,22,130)
+                             pdgId = cms.vint32(211,-211,11,13,-11,-13,22,130)
                          )
 
 # run the Cs subtraction on the J/Psi-jet, ignoring the Jpsi 
