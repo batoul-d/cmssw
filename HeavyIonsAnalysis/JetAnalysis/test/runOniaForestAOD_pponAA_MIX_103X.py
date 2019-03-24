@@ -290,3 +290,9 @@ process.offlinePrimaryVerticesRecovery.oldVertexLabel = "offlinePrimaryVertices"
 ###############################################################################
 #process.akCs4PFJets.src = 'pfCandComposites'
 process.genParticlesForJets.storeJMM = cms.untracked.bool(True)
+
+############################################# Ecal Escale shift producer
+from HLTrigger.Configuration.CustomConfigs import MassReplaceInputTag
+process = MassReplaceInputTag(process,"particleFlow","ecalShiftParticleFlow")
+process.load("RecoHI.HiJetAlgos.EcalEscaleShiftPFProducer_cff")
+process.ana_step.insert(0,process.ecalShiftParticleFlow)

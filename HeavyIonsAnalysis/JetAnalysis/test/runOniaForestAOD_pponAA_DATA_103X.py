@@ -386,3 +386,8 @@ process.superFilterPath = cms.Path(process.superFilterSequence)
 process.skimanalysis.superFilters = cms.vstring("superFilterPath")
 for path in process.paths:
     getattr(process,path)._seq = process.superFilterSequence*getattr(process,path)._seq
+#################################### Ecal E scale shift
+from HLTrigger.Configuration.CustomConfigs import MassReplaceInputTag
+process = MassReplaceInputTag(process,"particleFlow","ecalShiftParticleFlow")
+process.load("RecoHI.HiJetAlgos.EcalEscaleShiftPFProducer_cff")
+process.ana_step.insert(0,process.ecalShiftParticleFlow)
