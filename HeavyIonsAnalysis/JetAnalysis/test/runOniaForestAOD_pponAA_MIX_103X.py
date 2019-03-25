@@ -194,7 +194,6 @@ from HiAnalysis.HiOnia.oniaTreeAnalyzer_cff import oniaTreeAnalyzer
 #oniaTreeAnalyzer(process, muonTriggerList=[[],[],[],[]], HLTProName='HLT', muonSelection="Trk", useL1Stage2=True, isMC=True, pdgID=443, outputFileName="OniaTree.root", doTrimu=False)
 oniaTreeAnalyzer(process, muonSelection="Glb", isMC=True, outputFileName="HiForestAOD.root")
 
-
 process.pfcandAnalyzer.pfCandidateLabel = 'pfCandJPsi'
 
 
@@ -290,9 +289,3 @@ process.offlinePrimaryVerticesRecovery.oldVertexLabel = "offlinePrimaryVertices"
 ###############################################################################
 #process.akCs4PFJets.src = 'pfCandComposites'
 process.genParticlesForJets.storeJMM = cms.untracked.bool(True)
-
-############################################# Ecal Escale shift producer
-from HLTrigger.Configuration.CustomConfigs import MassReplaceInputTag
-process = MassReplaceInputTag(process,"particleFlow","ecalShiftParticleFlow")
-process.load("RecoHI.HiJetAlgos.EcalEscaleShiftPFProducer_cff")
-process.ana_step.insert(0,process.ecalShiftParticleFlow)
