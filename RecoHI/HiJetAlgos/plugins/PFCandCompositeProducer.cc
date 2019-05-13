@@ -332,8 +332,8 @@ PFCandCompositeProducer::selMuonCand(const pat::CompositeCandidate jpsiCand, con
   double eta = muon->eta();
   double pt = muon->pt();
   bool isMuonInAcc = (fabs(eta) < 2.4 && ((fabs(eta) < 1.2 && pt >= 3.5) ||
-                     (1.2 <= fabs(eta) && fabs(eta) < 2.1 && pt >= 5.77-1.89*fabs(eta)) ||
-                     (2.1 <= fabs(eta) && pt >= 1.8)));
+                     (1.2 <= fabs(eta) && fabs(eta) < 2.1 && pt >= 5.47-1.89*fabs(eta)) ||
+                     (2.1 <= fabs(eta) && pt >= 1.5)));
   
   if(!isMuonInAcc) return false;
   return true;
