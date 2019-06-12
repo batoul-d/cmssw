@@ -161,10 +161,10 @@ akCs3PFpatJetsWithBtagging = patJets.clone(
         cms.InputTag("akCs3PFTrackCountingHighPurBJetTags"),
         ),
     jetIDMap = cms.InputTag("akCs3PFJetID"),
-    addBTagInfo = True,
-    addTagInfos = True,
+    addBTagInfo = False,
+    addTagInfos = False,
     addDiscriminators = True,
-    addAssociatedTracks = True,
+    addAssociatedTracks = False,
     addJetCharge = False,
     addJetID = False,
     getJetMCFlavour = False,
@@ -200,7 +200,7 @@ akCs3PFJetAnalyzer = inclusiveJetAnalyzer.clone(
     useHepMC = cms.untracked.bool(False),
     genParticles = cms.untracked.InputTag("genParticles"),
     eventInfoTag = cms.InputTag("generator"),
-    doLifeTimeTagging = cms.untracked.bool(True),
+    doLifeTimeTagging = cms.untracked.bool(False),
     doLifeTimeTaggingExtras = cms.untracked.bool(False),
     bTagJetName = cms.untracked.string("akCs3PF"),
     jetName = cms.untracked.string("akCs3PF"),
@@ -256,8 +256,8 @@ akCs3PFJetSequence_data = cms.Sequence(
     # *
     akCs3PFJetTracksAssociatorAtVertex
     *
-    akCs3PFJetBtagging
-    *
+    #akCs3PFJetBtagging
+    #*
     akCs3PFNjettiness
     *
     akCs3PFpatJetsWithBtagging

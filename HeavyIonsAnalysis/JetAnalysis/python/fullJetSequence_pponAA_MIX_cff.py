@@ -19,28 +19,28 @@ genSignalSequence = cms.Sequence(
     hiSignalGenParticles +
     genParticlesForJetsSignal +
 
-    #ak3HiGenJets +
+    ak3HiGenJets +
     ak4HiGenJets +
 
     signalPartons +
 
-    #ak3HiSignalGenJets +
+    ak3HiSignalGenJets +
     ak4HiSignalGenJets +
 
-    #ak3HiGenNjettiness +
+    ak3HiGenNjettiness +
     ak4HiGenNjettiness
 )
 
 genCleanedSequence = cms.Sequence(
     genParticlesForJets +
 
-    #ak3HiGenJets +
+    ak3HiGenJets +
     ak4HiGenJets +
 
     myPartons +
     cleanedPartons +
 
-    #ak3HiCleanedGenJets +
+    ak3HiCleanedGenJets +
     ak4HiCleanedGenJets
 )
 
@@ -53,21 +53,38 @@ ak4PFJetsWithJPsi = ak4PFJets.clone(
     writeJetsWithConst = cms.bool(True)
 )
 
+ak3PFJetsWithJPsi = ak3PFJets.clone(
+    src = 'pfCandComposites',
+    jetCollInstanceName = cms.string('pfParticlesWithJPsi'),
+    writeJetsWithConst = cms.bool(True)
+)
+
 #filter out the jet containing the jpsi
 ak4PFXJetsWithJPsi = cms.EDFilter("PFJetXSelector",
                             src = cms.InputTag("ak4PFJetsWithJPsi"),
                             cut = cms.string("pt > 0.0 && abs(rapidity()) < 3.0")
 )
 
+ak3PFXJetsWithJPsi = cms.EDFilter("PFJetXSelector",
+                            src = cms.InputTag("ak3PFJetsWithJPsi"),
+                            cut = cms.string("pt > 0.0 && abs(rapidity()) < 3.0")
+)
+
 # Now remove the J/Psi
-csCandsNoJPsi = cms.EDFilter("PFCandidateFwdPtrCollectionPdgIdFilter",
+cs4CandsNoJPsi = cms.EDFilter("PFCandidateFwdPtrCollectionPdgIdFilter",
                              src = cms.InputTag("ak4PFXJetsWithJPsi","constituents"),
+                             pdgId = cms.vint32(211,-211,11,13,-11,-13,22,130)
+                         )
+cs3CandsNoJPsi = cms.EDFilter("PFCandidateFwdPtrCollectionPdgIdFilter",
+                             src = cms.InputTag("ak3PFXJetsWithJPsi","constituents"),
                              pdgId = cms.vint32(211,-211,11,13,-11,-13,22,130)
                          )
 
 # run the Cs subtraction on the J/Psi-jet, ignoring the Jpsi 
-akCs4PFJets.src = cms.InputTag("csCandsNoJPsi")
-akCs4PFJets.jetCollInstanceName = cms.string('pfParticlesCsNoJPsi')
+akCs4PFJets.src = cms.InputTag("cs4CandsNoJPsi")
+akCs4PFJets.jetCollInstanceName = cms.string('pfParticlesCs4NoJPsi')
+akCs3PFJets.src = cms.InputTag("cs3CandsNoJPsi")
+akCs3PFJets.jetCollInstanceName = cms.string('pfParticlesCs3NoJPsi')
 
 ### put the J/Psi back with the candidates
 
@@ -82,17 +99,27 @@ pfCandJPsi = cms.EDFilter("PdgIdPFCandidateSelector",
 #                          src = cms.InputTag("akCs4PFJets","pfParticlesCs")
 #)
 
-pfCandsCsPlusJPsi = cms.EDProducer(
+pfCandsCs4PlusJPsi = cms.EDProducer(
     "PFCandidateListMerger",
-    src = cms.VInputTag(cms.InputTag("akCs4PFJets","pfParticlesCsNoJPsi"),
+    src = cms.VInputTag(cms.InputTag("akCs4PFJets","pfParticlesCs4NoJPsi"),
+                        cms.InputTag("pfCandJPsi"))    
+)
+pfCandsCs3PlusJPsi = cms.EDProducer(
+    "PFCandidateListMerger",
+    src = cms.VInputTag(cms.InputTag("akCs3PFJets","pfParticlesCs3NoJPsi"),
                         cms.InputTag("pfCandJPsi"))    
 )
 
 
 
 akCs4PFJetsWithJPsi = ak4PFJets.clone(
-    src = cms.InputTag("pfCandsCsPlusJPsi"),
-    jetCollInstanceName = cms.string('pfParticlesCsWithJPsi'),
+    src = cms.InputTag("pfCandsCs4PlusJPsi"),
+    jetCollInstanceName = cms.string('pfParticlesCs4WithJPsi'),
+    writeJetsWithConst = cms.bool(True)
+)
+akCs3PFJetsWithJPsi = ak3PFJets.clone(
+    src = cms.InputTag("pfCandsCs3PlusJPsi"),
+    jetCollInstanceName = cms.string('pfParticlesCs3WithJPsi'),
     writeJetsWithConst = cms.bool(True)
 )
 
@@ -106,7 +133,18 @@ akCs4PFpatJetsWithBtagging.jetSource = "akCs4PFJetsWithJPsi"
 akCs4PFpatJets.jetSource = "akCs4PFJetsWithJPsi"
 akCs4PFPatJetPartonAssociationLegacy.jets = "akCs4PFJetsWithJPsi"
 
-akCs4PFJetAnalyzer.pfCandidateLabel = cms.untracked.InputTag('pfCandsCsPlusJPsi')
+akCs4PFJetAnalyzer.pfCandidateLabel = cms.untracked.InputTag('pfCandsCs4PlusJPsi')
+
+akCs3PFmatch.src = "akCs3PFJetsWithJPsi"
+akCs3PFparton.src = "akCs3PFJetsWithJPsi"
+akCs3PFcorr.src = "akCs3PFJetsWithJPsi"
+akCs3PFNjettiness.src = "akCs3PFJetsWithJPsi"
+
+akCs3PFpatJetsWithBtagging.jetSource = "akCs3PFJetsWithJPsi"
+akCs3PFpatJets.jetSource = "akCs3PFJetsWithJPsi"
+akCs3PFPatJetPartonAssociationLegacy.jets = "akCs3PFJetsWithJPsi"
+
+akCs3PFJetAnalyzer.pfCandidateLabel = cms.untracked.InputTag('pfCandsCs3PlusJPsi')
 
 jetSequence = cms.Sequence(
     rhoSequence +
@@ -119,12 +157,21 @@ jetSequence = cms.Sequence(
 
     #akPu4CaloJets +
     #akPu4PFJets +
+    pfCandJPsi +
+
     ak4PFJetsWithJPsi +
     ak4PFXJetsWithJPsi +
-    csCandsNoJPsi +
+    cs4CandsNoJPsi +
     akCs4PFJets +
-    pfCandJPsi +
-    pfCandsCsPlusJPsi +
+    pfCandsCs4PlusJPsi +
     akCs4PFJetsWithJPsi +
-    akCs4PFJetSequence
+    akCs4PFJetSequence +
+
+    ak3PFJetsWithJPsi +
+    ak3PFXJetsWithJPsi +
+    cs3CandsNoJPsi +
+    akCs3PFJets +
+    pfCandsCs3PlusJPsi +
+    akCs3PFJetsWithJPsi +
+    akCs3PFJetSequence
 )

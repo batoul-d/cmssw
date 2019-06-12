@@ -176,6 +176,43 @@ akCs3PFpatJetsWithBtagging = patJets.clone(
     # embedPFCandidates = True
     )
 
+akCs3PFpatJets = patJets.clone(
+    jetSource = cms.InputTag("akCs3PFJets"),
+    genJetMatch            = cms.InputTag("akCs3PFmatch"),
+    genPartonMatch         = cms.InputTag("akCs3PFparton"),
+    jetCorrFactorsSource   = cms.VInputTag(cms.InputTag("akCs3PFcorr")),
+    JetPartonMapSource     = cms.InputTag("akCs3PFPatJetFlavourAssociationLegacy"),
+    JetFlavourInfoSource   = cms.InputTag("akCs3PFPatJetFlavourAssociation"),
+    trackAssociationSource = cms.InputTag("akCs3PFJetTracksAssociatorAtVertex"),
+    useLegacyJetMCFlavour  = True,
+    discriminatorSources   = cms.VInputTag(
+        cms.InputTag("akCs3PFSimpleSecondaryVertexHighEffBJetTags"),
+        cms.InputTag("akCs3PFSimpleSecondaryVertexHighPurBJetTags"),
+        cms.InputTag("akCs3PFCombinedSecondaryVertexBJetTags"),
+        cms.InputTag("akCs3PFCombinedSecondaryVertexV2BJetTags"),
+        cms.InputTag("akCs3PFJetBProbabilityBJetTags"),
+        cms.InputTag("akCs3PFJetProbabilityBJetTags"),
+        # cms.InputTag("akCs3PFSoftPFMuonByPtBJetTags"),
+        # cms.InputTag("akCs3PFSoftPFMuonByIP3dBJetTags"),
+        cms.InputTag("akCs3PFTrackCountingHighEffBJetTags"),
+        cms.InputTag("akCs3PFTrackCountingHighPurBJetTags"),
+        ),
+    jetIDMap = cms.InputTag("akCs3PFJetID"),
+    addBTagInfo  = False,
+    addTagInfos = False,
+    addDiscriminators = False,
+    addAssociatedTracks = False,
+    addJetCharge = False,
+    addJetID = False,
+    getJetMCFlavour = True,
+    addGenPartonMatch = True,
+    addGenJetMatch = True,
+    embedGenJetMatch = True,
+    embedGenPartonMatch = True,
+    # embedCaloTowers = False,
+    # embedPFCandidates = True
+    )
+
 akCs3PFNjettiness = Njettiness.clone(
     src = cms.InputTag("akCs3PFJets"),
     R0  = cms.double(0.3)
@@ -187,7 +224,8 @@ akCs3PFpatJetsWithBtagging.userData.userFloats.src += [
     'akCs3PFNjettiness:tau3']
 
 akCs3PFJetAnalyzer = inclusiveJetAnalyzer.clone(
-    jetTag = cms.InputTag("akCs3PFpatJetsWithBtagging"),
+#    jetTag = cms.InputTag("akCs3PFpatJetsWithBtagging"),
+    jetTag = cms.InputTag("akCs3PFpatJets"),
     genjetTag = 'ak3HiSignalGenJets',
     rParam = 0.3,
     matchJets = cms.untracked.bool(False),
@@ -244,7 +282,8 @@ akCs3PFJetSequence_mc = cms.Sequence(
     # I'm not sure how to do this transparently (Marta)
     akCs3PFNjettiness
     *
-    akCs3PFpatJetsWithBtagging
+    #akCs3PFpatJetsWithBtagging
+    akCs3PFpatJets
     *
     akCs3PFJetAnalyzer
     )
@@ -260,7 +299,8 @@ akCs3PFJetSequence_data = cms.Sequence(
     *
     akCs3PFNjettiness
     *
-    akCs3PFpatJetsWithBtagging
+    #akCs3PFpatJetsWithBtagging
+    akCs3PFpatJets
     *
     akCs3PFJetAnalyzer
     )

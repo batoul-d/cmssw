@@ -47,7 +47,14 @@ class PFCandCompositeProducer : public edm::EDProducer {
   bool isHI_;
   bool replaceJMM_;
   bool replaceDKPi_;
+  
+  struct ComparePt {
+    bool operator()( pat::CompositeCandidate t1, pat::CompositeCandidate t2) const { return t1.pt() > t2.pt(); }
+  };
+  ComparePt ptComparator;
  
   
 };
 #endif
+
+

@@ -114,7 +114,8 @@ PFCandCompositeProducer::produce(edm::Event& iEvent, const edm::EventSetup& iSet
   }
   
   std::vector<pat::CompositeCandidate> selComposites;
-  
+  // sort in pt
+  std::sort(selComposites.begin(), selComposites.end(), ptComparator); 
   
   // first pass over composite candidates, apply selections and check for presence in PF candidates   
   for (std::vector<pat::CompositeCandidate>::const_iterator it=composites->begin();

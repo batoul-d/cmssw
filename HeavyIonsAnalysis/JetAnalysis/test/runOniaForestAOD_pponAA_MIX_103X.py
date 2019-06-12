@@ -11,6 +11,7 @@ process = cms.Process('HiForest')
 ###############################################################################
 
 process.load("HeavyIonsAnalysis.JetAnalysis.HiForest_cff")
+#print "Comment this back !!!! "
 process.HiForest.inputLines = cms.vstring("HiForest 103X")
 import subprocess, os
 version = subprocess.check_output(['git',
@@ -26,7 +27,7 @@ process.HiForest.HiForestVersion = cms.string(version)
 process.source = cms.Source("PoolSource",
     duplicateCheckMode = cms.untracked.string("noDuplicateCheck"),
     fileNames = cms.untracked.vstring(
-        "/store/user/anstahll/Dilepton/MC/Embedded/JpsiMM_5p02TeV_TuneCP5_Embd_RECO_20190117/JpsiMM_5p02TeV_TuneCP5/JpsiMM_5p02TeV_TuneCP5_Embd_RECO_20190117/190118_020651/0001/JpsiMM_5p02TeV_TuneCP5_Embd_step2_1074.root",
+        "/store/user/anstahll/Dilepton/MC/Embedded/JPsiMM_5p02TeV_TuneCP5_Embd_RECO_20190326/JPsiMM_5p02TeV_TuneCP5_Embd/JPsiMM_5p02TeV_TuneCP5_Embd_RECO_20190326/190327_060527/0004/HIN-HINPbPbAutumn18DRHIMix-00008_step2_4159.root",
         ),
     )
 
@@ -91,6 +92,11 @@ process.akPu4Calocorr.payload = "AK4Calo"
 process.akPu4PFcorr.payload = "AK4PF"
 process.akCs4PFcorr.payload = "AK4PF"
 process.akPu4PFJets.jetPtMin = 1
+
+process.akPu3Calocorr.payload = "AK3Calo"
+process.akPu3PFcorr.payload = "AK3PF"
+process.akCs3PFcorr.payload = "AK3PF"
+process.akPu3PFJets.jetPtMin = 1
 
 process.load('HeavyIonsAnalysis.JetAnalysis.hiFJRhoAnalyzer_cff')
 process.load("HeavyIonsAnalysis.JetAnalysis.pfcandAnalyzer_cfi")
