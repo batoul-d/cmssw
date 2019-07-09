@@ -338,7 +338,7 @@ process.load("RecoVertex.PrimaryVertexProducer.OfflinePrimaryVerticesRecovery_cf
 process.ana_step = cms.Path(
     process.offlinePrimaryVerticesRecovery +
     process.HiForest +
-    #process.hltanalysis +
+    process.hltanalysis +
     #process.hltobject +
     #process.l1object +
     process.centralityBin +

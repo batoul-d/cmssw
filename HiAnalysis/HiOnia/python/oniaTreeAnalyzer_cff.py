@@ -21,7 +21,9 @@ def oniaTreeAnalyzer(process, muonTriggerList=[[],[],[],[]], HLTProName='HLT', m
                 "HLT_HIL3Mu0_L2Mu0_v1",
                 "HLT_HIL3Mu0NHitQ10_L2Mu0_MAXdR3p5_M1to5_v1",
                 "HLT_HIL3Mu2p5NHitQ10_L2Mu2_M7toinf_v1",
-                "HLT_HIL3Mu3_L1TripleMuOpen_v1"
+                "HLT_HIL3Mu3_L1TripleMuOpen_v1",
+                "HLT_HIL3Mu0NHitQ10_L2Mu0_MAXdR3p5_M1to5_L2Filter_v1",
+                "HLT_HIL3Mu0NHitQ10_L2Mu0_MAXdR3p5_M1to5_L3Filter_v1",
                 ),
             'DoubleMuonFilter'  : cms.vstring(
                 "hltL1fL1sL1DoubleMuOpenL1Filtered0",
@@ -38,7 +40,9 @@ def oniaTreeAnalyzer(process, muonTriggerList=[[],[],[],[]], HLTProName='HLT', m
                 "hltL3f0L3Mu0L2Mu0Filtered0",
                 "hltL3f0L3Mu0L2Mu0DR3p5FilteredNHitQ10M1to5",
                 "hltL3f0L3Mu2p5NHitQ10L2Mu2FilteredM7toinf",
-                "hltL3fL1sL1DoubleMuOpenL1fN3L2f0L3Filtered3"
+                "hltL3fL1sL1DoubleMuOpenL1fN3L2f0L3Filtered3",
+                "hltL2fDoubleMuOpenL2DR3p5PreFiltered0",
+                "hltL3f0DR3p5L3FilteredNHitQ10",
                 ),
             'SingleMuonTrigger' : cms.vstring(
                 "HLT_HIL1MuOpen_Centrality_70_100_v1",
@@ -52,6 +56,8 @@ def oniaTreeAnalyzer(process, muonTriggerList=[[],[],[],[]], HLTProName='HLT', m
                 "HLT_HIL3Mu12_v1",
                 "HLT_HIL3Mu15_v1",
                 "HLT_HIL3Mu20_v1",
+                "HLT_HIL3Mu0NHitQ10_L2Mu0_MAXdR3p5_M1to5_L2Filter_v1",
+                "HLT_HIL3Mu0NHitQ10_L2Mu0_MAXdR3p5_M1to5_L3Filter_v1",
                 ),
             'SingleMuonFilter'  : cms.vstring(
                 "hltL1fL1sL1MuOpenCentrality70100L1Filtered0",
@@ -65,6 +71,8 @@ def oniaTreeAnalyzer(process, muonTriggerList=[[],[],[],[]], HLTProName='HLT', m
                 "hltL3fL1sL1SingleMuOpenL1f7L2f0L3Filtered12",
                 "hltL3fL1sL1SingleMuOpenL1f7L2f0L3Filtered15",
                 "hltL3fL1sL1SingleMuOpenL1f7L2f0L3Filtered20",
+                "hltL2fDoubleMuOpenL2DR3p5PreFiltered0",
+                "hltL3f0DR3p5L3FilteredNHitQ10",
                 )
             }
 

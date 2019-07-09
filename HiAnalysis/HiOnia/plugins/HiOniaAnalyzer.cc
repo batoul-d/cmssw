@@ -2960,7 +2960,7 @@ HiOniaAnalyzer::hltReport(const edm::Event &iEvent ,const edm::EventSetup& iSetu
       unsigned int triggerIndex= hltConfig.triggerIndex( it->first );
       if (it->first == "NoTrigger") continue;
       if (triggerIndex >= n) {
-              std::cout << "[HiOniaAnalyzer::hltReport] --- TriggerName " << it->first << " not available in config!" << std::endl;
+	//std::cout << "[HiOniaAnalyzer::hltReport] --- TriggerName " << it->first << " not available in config!" << std::endl;
       }
       else {
         it->second= triggerIndex;

@@ -219,13 +219,13 @@ process.ana_step = cms.Path(
     process.oniaTreeAna +
     process.particleFlowNoHF +
     process.pfCandComposites +
-    process.jetSequence 
+    process.jetSequence +
 #    process.ggHiNtuplizer +
 #    process.ggHiNtuplizerGED +
 #    process.hiFJRhoAnalyzer +
-#    process.pfcandAnalyzer +
-#    process.pfcandAnalyzerCS #+
-#    process.trackSequencesPP +
+    process.pfcandAnalyzer +
+    process.pfcandAnalyzerCS +
+    process.trackSequencesPP #+
 #    process.rechitanalyzerpp
     )
 

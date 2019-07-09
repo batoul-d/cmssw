@@ -306,7 +306,7 @@ bool
 PFCandCompositeProducer::selMuonCand(const pat::CompositeCandidate jpsiCand, const char* muonName){
   const pat::Muon* muon = dynamic_cast<const pat::Muon*>(jpsiCand.daughter(muonName));
 
-  if(!muon::isGoodMuon(*muon, muon::TMOneStationTight)) return false;
+  //if(!muon::isGoodMuon(*muon, muon::TMOneStationTight)) return false;
 
   if(!muon->isTrackerMuon()) return false;
 
